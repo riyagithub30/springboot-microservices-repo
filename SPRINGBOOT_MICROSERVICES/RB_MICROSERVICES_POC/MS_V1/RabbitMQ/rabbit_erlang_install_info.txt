@@ -1,0 +1,3 @@
+https://www.rabbitmq.com/install-windows.html
+
+https://www.erlang.org/patches/otp-25.2.2

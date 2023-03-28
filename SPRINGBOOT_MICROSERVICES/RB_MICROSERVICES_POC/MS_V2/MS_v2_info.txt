@@ -1,0 +1,121 @@
+GitHub url
+-----------------
+
+in28 reference for v2 =>  https://github.com/in28minutes/spring-microservices-v2
+
+in28 reference for v1 => https://github.com/in28minutes/spring-microservices
+
+========================================================================================================================
+
+**Load Balancing
+-----------------------
+
+-> previously load balancing is done with the help of Ribbon
+--> but in newer version , load balancing is done with Eureka server as , as Eureka maven jar contains the load-balancer dependency
+
+Example-
+
+@FeignClient(name = "application name") //this is enough , Eureka will handle the load balancing,if we are using Feign and Eureka then load balancer will come as free
+.
+.
+.
+.
+
+-->>Eureka maven dependency hirachey
+
+spring-cloud-starter-netflix-eureka
+ spring-cloud-starter-loadbalancer
+
+
+
+========================================================================================================================================
+
+***API Gateway
+------------------
+
+-->> earlier version/legecy version zuul api gateway was used and it was very popular
+
+-->>recent version spring-cloud-gateway is used
+
+reason for using api-gateway
+-----------------------------
+1.authorization
+2.authentication
+3.rate limit
+4.fault toulerance
+
+steps--
+
+1) Create a springboot project -using spring linitializer - api-gateway-server
+
++dependency ->>>> actuator , devtools , Eureka discovery client , Gateway(spring cloud routing)
+
+
+2) edit application.properties file
+
+spring.application.name = api-gateway
+server.port = 8765
+eureka.client.serviceUrl.defaultZone = http://localhost:8761/eureka
+
+spring.cloud.gateway.discovery.locator.enabled=true (// enable true will make gateway to work across different microservices)
+
+
+Note:-
+***
+http://localhost:8765/application-name/{api end poiny url}
+{where 8765 = api gateway port}
+
+===========================================================================================================================================
+
+
+URLS - Reference for testing microservice calls / web service invocation
+
+Initial
+
+- http://localhost:8765/CURRENCY-EXCHANGE/currency-exchange/from/USD/to/INR
+
+- http://localhost:8765/CURRENCY-CONVERSION/currency-conversion/from/USD/to/INR/quantity/10
+
+- http://localhost:8765/CURRENCY-CONVERSION/currency-conversion-feign/from/USD/to/INR/quantity/10
+
+
+
+Lower Case
+
+- http://localhost:8765/currency-exchange/currency-exchange/from/USD/to/INR
+
+- http://localhost:8765/currency-conversion/currency-conversion/from/USD/to/INR/quantity/10
+
+- http://localhost:8765/currency-conversion/currency-conversion-feign/from/USD/to/INR/quantity/10
+
+
+
+Custom Routes
+
+- http://localhost:8765/currency-exchange/from/USD/to/INR
+
+- http://localhost:8765/currency-conversion/from/USD/to/INR/quantity/10
+
+- http://localhost:8765/currency-conversion-feign/from/USD/to/INR/quantity/10
+
+- http://localhost:8765/currency-conversion-new/from/USD/to/INR/quantity/10
+
+
+
+============================================================================================================================================
+ ***Exploring routes with spring-cloud-gateway
+
+wip
+
+
+
+
+===============================================================================================================================================
+
+****Circuit Breaker - Resilience4j
+
+-->erlier version of springboot and spring cloud uses Hystrix for fault tolurence - {sending the default response if the consuming web service is down}
+
+---->>>> recent version of springboot and spring cloud uses Resilience4j for the fault tolurence
+
+-->>> annotations are @Retry , @CiruitBreaker ,

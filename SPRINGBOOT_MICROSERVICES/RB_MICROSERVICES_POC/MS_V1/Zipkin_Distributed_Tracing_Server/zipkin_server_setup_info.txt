@@ -1,0 +1,80 @@
+zipkin server install steps :-
+--------------------------------------
+
+ONLY FOR WINDOWS USERS
+If you are on Windows.You can use the below commands to run Zipkin Server.
+
+CMD =>
+
+set RABBIT_URI=amqp://localhost
+java -jar zipkin-server-2.7.0-exec.jar
+
+note = after running this above command i.e. executing/run the zipkins jar will start the zipkin server and zipkin runs on 9411 port
+**
+set RABBIT_URI=amqp://localhost command will include/connect/start the RabbitMQ along with zipkin
+
+Note = After installing Erlang and RabbitMQ , RabbitMQ will become an application and can get it from the start menu
+=========================================================================================================================================
+
+Alternatively we can download zipkin jar file from the zipkin page
+Google -> quickstart openzipkin -> Java -> take the url for the maven link for zipkin server download
+
+
+========================================================================================================================================
+To check whether zipkin is up and running or not
+
+http://localhost:9411/zipkin
+zipkin port = 9411
+
+========================================================================================================================================
+
+Connecting Microservices to Zipkin
+-------------------------------------
+
+** If you are using Spring Boot Release >= 2.1.*, you would need to use spring-cloud-starter-zipkin and spring-rabbit instead 
+of spring-cloud-sleuth-zipkin and spring-cloud-starter-bus-amqp.
+
+**You would need to make this change in THREE pom.xmls - in currency-conversion-service, 
+currency-exchange-service, and zuul-api-gateway projects
+
+1) Need to add maven dependency for zipkin and rabbitMq
+
+
+New Dependencies
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-zipkin</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-rabbit</artifactId>
+		</dependency>
+
+OLD Dependencies to be Replaced
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-zipkin</artifactId>
+		</dependency>
+ 
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
+		</dependency>
+
+===========================================================================================================================================
+
+Sequence of execution of services 
+
+1.Eureka Naming server
+2.Zipkin server (through CMD jar file run)
+3.currency-exchange-service
+4.currency-conversion-service
+5.netflix-zuul api gateway  server
+
+
+
+
+
+

@@ -1,0 +1,58 @@
+Fault toulerence with Hystrix
+---------------------------------------
+
+->For example Microservice Currency-Convertion-service is connected/depended on currency-exchange-service and it connected/depended with
+Limit-Service
+
+-> if any one of the microservice goes down/not working then all other microservices also goes down
+->> so , in order to prevent from the microservice chain break down , Hystrix will send back a default result/output to the consumer microservice when
+any error/exception occur. This is known as Fault toulerence.
+
+
+Implementing Hystrix
+---------------------------
+
+1) Step 1 = Add hystrix maven dependency on the pom.xml file of web service
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-hystrix</artifactId>
+		</dependency>
+
+2)
+Step 2 = add @EnableHystrix annotation on the main class
+
+@SpringBootApplication
+@EnableHystrix
+
+
+3)
+Step 3 = add hystrix fallback on controller page .....fault toulenrence hystrix code
+
+@RestController
+public class DemoRestController{
+.
+.
+.
+.
+
+
+@GetMapping("/fault-tolurence-limit-service")
+@HystrixCommand(fallbackMethod = "fallbackRetriveConfiguration ")
+public LimitService retriveConfiguration()
+{
+
+return new RuntimeException("not available");
+
+}
+
+//method fallbackRetriveConfiguration() contains default output whenever there is an error
+
+public LimitService fallbackRetriveConfiguration()
+{
+  return(9,999);
+
+}
+}
+
+***note - in that case Hystrix implementation need to be implemented in limit-service

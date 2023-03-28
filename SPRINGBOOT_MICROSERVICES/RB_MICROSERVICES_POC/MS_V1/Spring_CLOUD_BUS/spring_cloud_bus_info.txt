@@ -1,0 +1,67 @@
+spring cloud bus
+---------------------------
+
+-> we have limit-service which is connected with spring-cloud-config-server
+
+-> spring-cloud-config-server contains the configuration properties for all the instances of different enviorenment
+ -> spring-cloud-config-server contains the properties file for dev,qa 
+	(i.e. limit-service-dev.properties , limit-service-qa.properties , limit-service.properties)
+ ->whenever we have made changes in the spring-cloud-config-server service properties file , then we need to commit the chaanges on git
+ -> all the enviorenment related configurations are placed in the git repository
+
+=>> limit-service ia running on port 8000 , 8001
+-> at that time means when the limit-service is running on port 8000 and 8001 and we have made changes on the spring-cloud-config server
+limit-service properties file and we commit the changes on git
+-> then limit-service will not take the updated changes from the spring-cloud-config-server
+
+=>> for this we need to refresh the application
+ -> requirement >> postman >> POST request >> http://localhost:8080/application/refresh (port=8080 is the limit-service port)
+ -> if we encounter unauthorized request after hiting the refresh url , then we need to add below content on the limit-service.properties
+    file of spring-cloud-congfig-server besides we need to have the actuator dependency on the limit-service
+
+Refresh URL = 
+springboot 1.0x = http://localhost:8080/refresh
+springboot 2.0.0x = http://localhost:8080/actuator/refresh
+
+limit-service.properties (spring-cloud-config-server)
+management.security.enabled = false (disable the actuator security)
+
+ - after made changes on the limit-service.properties file, we made the git commit
+->> after that refresh url will work and spring-cloud-config server properties changes will reflect on limit-service
+
+Note =
+[enable all actuator endpoints 
+management.endpoints.web.exposure.include=*
+]
+
+******drawback
+-> in the above case if we would have more that 2 instances of limit-service i.e. say 100+ instances of limit-service
+-> then every time we need to hit the referesh url approx 100+ times and limit-service maintenence will be poor and unmanageble
+
+   ****to overcome this issue Spring-Cloud-Bus which provides the single refresh url for all instances of the web service
+
+
+Implementing Spring-Cloud-Bus
+--------------------------------------
+--------------------------------------
+1)
+=>>>add dependency - spring-cloud-bus dependency on pom.xml file of {limit-service and spring-cloud-config-server application}
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bus-amqp</artifactId>
+		</dependency>
+
+**here rabbitmq cloud bus is using (cloud bus other options kafka , rabbitmq etc)
+
+2)
+=>>> disable actuator security on limit-service
+
+bootstarp.properties(limit-service)
+management.security.enabled = false
+
+===>>>>>>url = postman >> POST >> http://localhost:8080/bus/refresh
+
+**springboot 2.0.0+ http://localhost:8080/actuator/bus-refresh
+
+->> single url will refresh all instances of limit-service web service
